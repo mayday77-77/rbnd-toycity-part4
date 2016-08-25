@@ -32,4 +32,5 @@ class Product < Udacidata
       @@count_class_instances += 1
     end
 
+
 end
