@@ -1,5 +1,6 @@
 require_relative 'find_by'
 require_relative 'errors'
+require_relative '../data/schema'
 require 'csv'
 
 class Udacidata
@@ -9,6 +10,7 @@ class Udacidata
   def self.create(attributes = nil) # create new product
   	product_new = Product.new(attributes)
   	write_to_database(product_new)
+  	puts product_new
   end
 
   def self.all # display product array
@@ -16,12 +18,19 @@ class Udacidata
      print "#{@@product_array}\n"
   end
 
-  def self.write_to_database(product) # save product information to CSV file
+  def self.write_to_database(product) # save 1 product information to CSV file for every creation
   	database_file = File.dirname(__FILE__) + "/../data/data.csv"
   	CSV.open(database_file, "a+") do | csv |
-  		csv << ["#{product.id}","#{product.brand}","#{product.name}","#{product.price}"]
+  		csv << ["#{product.id}","#{product.brand}","#{product.name}","#{product.price}"];nil
   	end
-  	puts product
+  end
+
+  def self.rewrite_to_database(product_array) # rewrite to database CSV if a product is being destroyed
+  	database_file = File.dirname(__FILE__) + "/../data/data.csv"
+  	File.delete(database_file) if File.exist?(database_file) # remove the database file 
+  	db_create # recreate the database file with headers
+  	# rewrite the products into database CSV
+  	product_array.each {| product | write_to_database(product)};nil
   end
 
   def self.load_database # loads the CSV file into product array
@@ -53,6 +62,24 @@ class Udacidata
   		options.times { | each_time | new_product_array << @@product_array.reverse[each_time]}
   		print new_product_array.reverse
   	end
+  end
+
+  def self.find(product_id)
+  	search_product = @@product_array.select {| each_product| each_product.id == product_id} # select the product by ID
+  	search_product.first
+  end
+
+  def self.destroy(product_id)
+  	destroy_product = find(product_id) # return the product to be destroyed
+  	# delete the product from array and rewrite to database CSV
+  	@@product_array.reject! {| each_product| each_product.id == product_id}; nil # delete the product from the product array
+  	rewrite_to_database(@@product_array)  	
+  	destroy_product
+  end
+
+  def self.where(options = {})
+  	search_product = @@product_array.select {| each_product| each_product.brand == options[:brand]} # select product by brand
+  	search_product
   end
 
 end
