@@ -10,12 +10,12 @@ class Udacidata
   def self.create(attributes = nil) # create new product
   	product_new = Product.new(attributes)
   	write_to_database(product_new)
-  	puts product_new
+  	product_new
   end
 
   def self.all # display product array
      load_database
-     print "#{@@product_array}\n"
+     @@product_array
   end
 
   def self.write_to_database(product) # save 1 product information to CSV file for every creation
@@ -35,6 +35,7 @@ class Udacidata
 
   def self.load_database # loads the CSV file into product array
   	  database_file = File.dirname(__FILE__) + "/../data/data.csv"
+  	  @@product_array.clear 
   	  # :headers option to inform that headers exist
   	  CSV.foreach(database_file, :headers => true) do | row |
   	  	each_product = Product.new(id: row[0], brand: row[1], name: row[2], price: row[3]) # assign values into a product class 
@@ -43,30 +44,32 @@ class Udacidata
   end
 
   def self.first(options = {})
-  	#load_database
+  	load_database
   	if options.to_s.to_i == 0 # if no number passed in, print first element
   		@@product_array.first
   	else  # else loop through product array and print the number of products accordingly
   		new_product_array = [] 
   		options.times { | each_time | new_product_array << @@product_array[each_time]}
-  		print new_product_array
+  		new_product_array
   	end
   end
 
   def self.last(options = {})
-  	#load_database
+  	load_database
   	if options.to_s.to_i == 0 # if no number passed in, print last element
   		@@product_array.last
   	else  # else loop through product array and print the number of products accordingly
   		new_product_array = [] 
   		options.times { | each_time | new_product_array << @@product_array.reverse[each_time]}
-  		print new_product_array.reverse
+  		new_product_array.reverse
   	end
   end
 
   def self.find(product_id)
+  	load_database
   	search_product = @@product_array.select {| each_product| each_product.id == product_id} # select the product by ID
   	search_product.first
+
   end
 
   def self.destroy(product_id)

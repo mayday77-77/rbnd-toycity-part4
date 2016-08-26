@@ -22,7 +22,7 @@ print Product.create(brand: "MyCool", name: "dollhouse", price: 14.40)
 print Product.create(brand: "MySoft", name: "stuffed animal", price: 2.09)
 print Product.create(brand: "AllMy", name: "yoyo", price: 1.00)
 print Product.create(brand: "Udacity", name: "doll", price: 5.99)
-#
+puts
 puts "-------------------"
 puts "RETURN ALL PRODUCTS"
 puts "-------------------"
