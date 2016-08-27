@@ -69,7 +69,13 @@ class Udacidata
   	load_database
   	search_product = @@product_array.select {| each_product| each_product.id == product_id} # select the product by ID
   	search_product.first
+  end
 
+  def update(options = {}) #instance method used by product
+	@brand = options[:brand] if options[:brand]
+	@price = options[:price] if options[:price]
+    Product.rewrite_to_database(@@product_array)
+    self
   end
 
   def self.destroy(product_id)

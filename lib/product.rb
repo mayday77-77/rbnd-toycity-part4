@@ -17,11 +17,6 @@ class Product < Udacidata
     @price = opts[:price]
   end
 
-  def update(options = {})
-    @brand = options[:brand]
-    self
-  end
-
   private
 
     # Reads the last line of the data file, and gets the id if one exists
