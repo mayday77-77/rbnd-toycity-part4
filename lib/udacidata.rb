@@ -6,6 +6,7 @@ require 'csv'
 class Udacidata
   # Your code goes here!
   @@product_array = []
+  create_finder_methods :brand, :name
 
   def self.create(attributes = nil) # create new product
   	product_new = Product.new(attributes)
@@ -87,6 +88,7 @@ class Udacidata
   end
 
   def self.where(options = {})
+  	load_database
   	search_product = @@product_array.select {| each_product| each_product.brand == options[:brand]} # select product by brand
   	search_product
   end

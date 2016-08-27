@@ -73,8 +73,7 @@ puts
 puts "-------------------------------"
 puts "FIND PRODUCT 4 AND UPDATE BRAND"
 puts "-------------------------------"
-#print Product.find(4).update(brand: "NewBrand")
-print Product.find(4).update(brand: "NewBrand", price: 100)
+print Product.find(4).update(brand: "NewBrand")
 #
 puts
 puts "--------------"
@@ -105,7 +104,7 @@ puts
 puts "------------------------------------"
 puts "RETURN FIRST PRODUCT WITH GIVEN NAME"
 puts "------------------------------------"
-print Product.find_by_name("yoyo")
+print Product.find_by_name("doll")
 puts
 #
 puts
