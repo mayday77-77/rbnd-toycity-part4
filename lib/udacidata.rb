@@ -1,6 +1,7 @@
 require_relative 'find_by'
 require_relative 'errors'
 require_relative '../data/schema'
+require_relative '../lib/analyzable'
 require 'csv'
 
 class Udacidata
@@ -89,7 +90,12 @@ class Udacidata
 
   def self.where(options = {})
   	load_database
-  	search_product = @@product_array.select {| each_product| each_product.brand == options[:brand]} # select product by brand
+  	# select product by brand or name
+  	if options[:brand]
+  		search_product = @@product_array.select {| each_product| each_product.brand == options[:brand]}
+  	else
+  		search_product = @@product_array.select {| each_product| each_product.name == options[:name]}
+  	end
   	search_product
   end
 
