@@ -70,7 +70,12 @@ class Udacidata
   def self.find(product_id)
   	load_database
   	search_product = @@product_array.select {| each_product| each_product.id == product_id} # select the product by ID
-  	search_product.first
+  	if search_product.empty?
+  		product_not_found(product_id)
+  	else
+  		search_product.first
+  	end
+
   end
 
   def update(options = {}) #instance method used by product
@@ -81,7 +86,8 @@ class Udacidata
   end
 
   def self.destroy(product_id)
-  	destroy_product = find(product_id) # return the product to be destroyed
+  	# return the product to be destroyed and exception handling is being handle at the same time
+  	destroy_product = find(product_id) 
   	# delete the product from array and rewrite to database CSV
   	@@product_array.reject! {| each_product| each_product.id == product_id}; nil # delete the product from the product array
   	rewrite_to_database(@@product_array)  	
@@ -97,6 +103,14 @@ class Udacidata
   		search_product = @@product_array.select {| each_product| each_product.name == options[:name]}
   	end
   	search_product
+  end
+
+  def self.product_not_found(product_id) # handle product not found exceptions
+  	begin
+			raise ProductNotFoundError
+		rescue Exception => e
+			puts e.message + ": '#{product_id}' is not found"
+		end
   end
 
 end
