@@ -1,33 +1,28 @@
 module Analyzable
   # Your code goes here!
+
   def count_by_brand(product_array)
-  	product_stock = 0
-  	product_brands = []
-  	brand_hash = {}
-  	product_array.each {|each_product| (product_brands << each_product.brand).uniq!} # collect unique brands
-  	product_brands.each do | each_brand |
-  		product_array.each do | each_product| 
-  			product_stock += 1 if each_brand == each_product.brand
-  		end
-  		brand_hash["#{each_brand}"] = product_stock
-  		product_stock = 0
-  	end
-  	brand_hash
+    count_by_type(product_array, "brand") # passing in brand for the count by type method for differentiation
   end
 
   def count_by_name(product_array)
-  	product_stock = 0
-  	product_names = []
-  	name_hash = {}
-  	product_array.each {|each_product| (product_names << each_product.name).uniq!} # collect unique brands
-  	product_names.each do | each_name |
-  		product_array.each do | each_product| 
-  			product_stock += 1 if each_name == each_product.name
-  		end
-  		name_hash["#{each_name}"] = product_stock
-  		product_stock = 0
-  	end
-  	name_hash
+    count_by_type(product_array, "name") # passing in name for the count by type method for differentiation
+  end
+
+  def count_by_type(product_array, product_type)
+    product_stock = 0
+    product_type_unique = []
+    product_hash = {}
+    # collect unique brands or names, using send to dynamically determine which method to call to avoid repetition
+    product_array.each {|each_product| (product_type_unique << each_product.send(product_type)).uniq!} 
+    product_type_unique.each do | each_type |  # loop through unique types and gather the total in product array
+      product_array.each do | each_product| 
+        product_stock += 1 if each_type == each_product.send(product_type)
+      end
+      product_hash["#{each_type}"] = product_stock
+      product_stock = 0
+    end
+    product_hash
   end
    
   def average_price(product_array)
@@ -36,15 +31,21 @@ module Analyzable
   	(avg_price/product_array.length).round(2) # return average of all products in array
   end
 
-  def print_report(product_array)
-  	puts "Average Price: $#{average_price(product_array)}"
-  	puts "Inventory by Brand:\n"
-  	brand_hash = count_by_brand(product_array)
-  	brand_hash.each_pair {| each_brand, number | puts "- #{each_brand}: #{number}\n"}
-  	puts "Inventory by Name:"
-  	name_hash = count_by_name(product_array)
-  	name_hash.each_pair {| each_name, number | puts "- #{each_name}: #{number}\n"}
-  	return ""
-  end
+   def print_report(product_array) # collate all return report summary as string type
+    "Average Price: $#{average_price(product_array)}\n" +
+    "Inventory by Brand:\n" +
+    print_by_type(product_array, "count_by_brand") +
+    "Inventory by Name:\n" +
+    print_by_type(product_array, "count_by_name")
+    
+   end
+
+   def print_by_type(product_array, product_type_method)
+      product_string = ""
+      # using send to dynamically determine which method to call to avoid repetition
+      product_hash = send(product_type_method, product_array)
+      product_hash.each_pair {| each_type, number | product_string << "- #{each_type}: #{number}\n"} # printing both type and stock together
+      product_string
+   end
 
 end

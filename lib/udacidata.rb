@@ -10,9 +10,15 @@ class Udacidata
   create_finder_methods :brand, :name
 
   def self.create(attributes = nil) # create new product
-  	product_new = Product.new(attributes)
-  	write_to_database(product_new)
+  	product_new = Product.new(attributes)  	
+  	check_ID_not_found?(product_new.id) ? write_to_database(product_new) : product_id_exits
   	product_new
+  end
+
+  def self.check_ID_not_found?(product_id)
+  	load_database
+  	product_exists = @@product_array.select {|each_product| each_product.id == product_id}
+  	product_exists.empty? ? true : false
   end
 
   def self.all # display product array
@@ -41,7 +47,7 @@ class Udacidata
   	  # :headers option to inform that headers exist
   	  CSV.foreach(database_file, :headers => true) do | row |
   	  	each_product = Product.new(id: row[0], brand: row[1], name: row[2], price: row[3]) # assign values into a product class 
-  	  		@@product_array << each_product # create product array
+  	  	@@product_array << each_product # create product array
   	  end
   end
 
@@ -110,6 +116,14 @@ class Udacidata
 			raise ProductNotFoundError
 		rescue Exception => e
 			puts e.message + ": '#{product_id}' is not found"
+		end
+  end
+
+  def self.product_id_exits
+  	begin
+			raise ProductIDExists
+		rescue Exception => e
+			puts e.message + "\nProduct ID already exists"
 		end
   end
 

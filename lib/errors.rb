@@ -2,3 +2,7 @@
 class ProductNotFoundError  < StandardError 
 end
 
+class ProductIDExists < StandardError
+end
+
+
